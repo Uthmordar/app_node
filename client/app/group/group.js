@@ -13,5 +13,16 @@ angular.module('myappApp')
                 return groupFactory.query().$promise;
             }
         }
-      });
+      })
+      .state('group_new', {
+        url: '/group/new',
+        templateUrl: 'app/group/group_add.html',
+        controller: function($scope){
+            
+            $scope.groupAdd=function(form){
+                console.log(form.group_name);
+            };
+        }
+    });
+        
   });

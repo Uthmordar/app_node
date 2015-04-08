@@ -1,0 +1,10 @@
+div(ng-include='"components/navbar/navbar.html"')
+.container
+    .col-md-12
+        | This is the group view.
+        
+        form(name="form", ng-submit="groupAdd(form)")
+            input(type="text", placeholder="group name", ng-model="form.group_name")
+            input(type="submit", value="add")
+
+div(ng-include='"components/footer/footer.html"')
