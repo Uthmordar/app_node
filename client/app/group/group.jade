@@ -2,7 +2,10 @@ div(ng-include='"components/navbar/navbar.html"')
 .container
     .col-md-12
         | This is the group view.
-
+        
+        ul
+            li(ng-repeat="group in groups")
+                {{group.name}}
 footer.footer
   .container
     p

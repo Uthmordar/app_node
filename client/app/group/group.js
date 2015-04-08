@@ -6,6 +6,12 @@ angular.module('myappApp')
       .state('group', {
         url: '/group',
         templateUrl: 'app/group/group.html',
-        controller: 'GroupCtrl'
+        controller: 'GroupCtrl',
+        resolve: {
+            groups: function(groupFactory){
+                // query : tableau de resource, get : resource spécifique
+                return groupFactory.query().$promise;
+            }
+        }
       });
   });

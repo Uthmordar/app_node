@@ -32,31 +32,30 @@ Thing.find({}).remove(function() {
 });
 
 User.find({}).remove(function() {
-  User.create({
-    provider: 'local',
-    role: 'admin',
-    name: 'Admin',
-    email: 'admin@admin.com',
-    password: 'admin'
-  });
-  User.create({
-    provider: 'local',
-    name: 'Test User',
-    email: 'test@test.com',
-    password: 'test'
-  }, function(err, user){
-      console.log('finished populating users');
-      Group.find({}).remove(function(){
-        Group.create({
-           __creator: user._id,
-           name: 'Test group 1 2'
-        }, {
-           __creator: user._id,
-           name: 'Test group 2'
-        }, function(){
-            console.log('finished populating groups');
-        }
-        );
+    User.create({
+        provider: 'local',
+        role: 'admin',
+        name: 'Admin',
+        email: 'admin@admin.com',
+        password: 'admin'
+    });
+    User.create({
+        provider: 'local',
+        name: 'Test User',
+        email: 'test@test.com',
+        password: 'test'
+    }, function(err, user){
+        console.log('finished populating users');
+        Group.find({}).remove(function(){
+            Group.create({
+                __creator: user._id,
+                name: 'Test group 1 2'
+                }, {
+                __creator: user._id,
+                name: 'Test group 2'
+            }, function(){
+                console.log('finished populating groups');
+            });
         });
     });
 });
