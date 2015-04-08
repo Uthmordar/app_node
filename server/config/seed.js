@@ -5,8 +5,9 @@
 
 'use strict';
 
-var Thing = require('../api/thing/thing.model');
-var User = require('../api/user/user.model');
+var Thing=require('../api/thing/thing.model');
+var User=require('../api/user/user.model');
+var Group=require('../api/group/group.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -33,27 +34,29 @@ Thing.find({}).remove(function() {
 User.find({}).remove(function() {
   User.create({
     provider: 'local',
-    name: 'Test User',
-    email: 'test@test.com',
-    password: 'test'
-  }, {
-    provider: 'local',
     role: 'admin',
     name: 'Admin',
     email: 'admin@admin.com',
     password: 'admin'
-  }, {
+  });
+  User.create({
     provider: 'local',
-    name: 'User 1',
-    email: 'user1@mail.com',
-    password: 'user1'
-  }, {
-    provider: 'local',
-    name: 'User 2',
-    email: 'user2@mail.com',
-    password: 'user2'
-  }, function() {
+    name: 'Test User',
+    email: 'test@test.com',
+    password: 'test'
+  }, function(err, user){
       console.log('finished populating users');
-    }
-  );
+      Group.find({}).remove(function(){
+        Group.create({
+           __creator: user._id,
+           name: 'Test group 1 2'
+        }, {
+           __creator: user._id,
+           name: 'Test group 2'
+        }, function(){
+            console.log('finished populating groups');
+        }
+        );
+        });
+    });
 });

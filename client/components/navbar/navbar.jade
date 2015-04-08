@@ -13,6 +13,9 @@ div.navbar.navbar-default.navbar-static-top(ng-controller='NavbarCtrl')
         li(ng-repeat='item in menu', ng-class='{active: isActive(item.link)}')
           a(ng-href='{{item.link}}') {{item.title}}
 
+        li(ng-show='isLoggedIn()', ng-class='{active: isActive("/group")}')
+          a(href='/group') Group
+
         li(ng-show='isAdmin()', ng-class='{active: isActive("/admin")}')
           a(href='/admin') Admin
 
@@ -25,6 +28,10 @@ div.navbar.navbar-default.navbar-static-top(ng-controller='NavbarCtrl')
 
         li(ng-show='isLoggedIn()')
           p.navbar-text Hello {{ getCurrentUser().name }}
+
+        li(ng-show='isLoggedIn()', ng-class='{active: isActive("/group")}')
+          a(href='/group')
+            span.glyphicon.glyphicon-plus-sign Add Group
 
         li(ng-show='isLoggedIn()', ng-class='{active: isActive("/settings")}')
           a(href='/settings')
