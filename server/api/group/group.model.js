@@ -11,7 +11,7 @@ var GroupSchema = new Schema({
   info: {type: String, default: "infos group"},
   active: Boolean,
   users: [{type: Schema.ObjectId, ref: "User"}],
-  invitations: [{type: String}]
+  invitations: []
 });
 
 GroupSchema
@@ -33,4 +33,18 @@ GroupSchema
         }
         self.save();
     });
+    
+/*GroupSchema
+.pre('save', function(next){
+    var self=this;
+    var emails=self.invitations;
+    for(var i=0; i<emails.length; i++){
+        User.findOne({email: emails[i]}, {}, function(err, user){
+            if(user){
+                self.users.push(user._id);
+            }
+        });
+    }
+    next(); 
+});*/
 module.exports = mongoose.model('Group', GroupSchema);
