@@ -5,6 +5,9 @@ div(ng-include='"components/navbar/navbar.html"')
         
         form(name="form", ng-submit="groupAdd(form)")
             input(type="text", placeholder="group name", ng-model="form.group_name")
+            br
+            input(type="text", ng-model="form.emails", ng-list=";")
+            br
             input(type="submit", value="add")
 
 div(ng-include='"components/footer/footer.html"')

@@ -18,14 +18,14 @@ angular.module('myappApp')
       .state('group_new', {
         url: '/group/new',
         templateUrl: 'app/group/group_add.html',
-        controller: function($scope, groupFactory, Auth){
+        controller: function($scope, groupFactory, Auth, $state){
             $scope.user=Auth.getCurrentUser();
             
             $scope.groupAdd=function(form){
                 //console.log(form.group_name);
-                groupFactory.save({userId: $scope.user._id, name: form.group_name, __creator: $scope.user._id}).$promise
-                        .then(function(){
-                            
+                groupFactory.save({userId: $scope.user._id, name: form.group_name, __creator: $scope.user._id, emails: form.emails}).$promise
+                .then(function(){
+                    $state.go('group');
                 });
             };
         }
