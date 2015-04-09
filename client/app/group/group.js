@@ -19,8 +19,14 @@ angular.module('myappApp')
         url: '/group/new',
         templateUrl: 'app/group/group_add.html',
         controller: function($scope, groupFactory, Auth){
+            $scope.user=Auth.getCurrentUser();
+            
             $scope.groupAdd=function(form){
-                console.log(form.group_name);
+                //console.log(form.group_name);
+                groupFactory.save({userId: $scope.user._id, name: form.group_name, __creator: $scope.user._id}).$promise
+                        .then(function(){
+                            
+                });
             };
         }
     });
