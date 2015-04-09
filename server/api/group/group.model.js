@@ -10,23 +10,27 @@ var GroupSchema = new Schema({
   name: String,
   info: {type: String, default: "infos group"},
   active: Boolean,
-  users: [{type: Schema.ObjectId, ref: "User"}]
+  users: [{type: Schema.ObjectId, ref: "User"}],
+  invitations: [{type: String}]
 });
 
 GroupSchema
     .virtual('emails')
     .set(function(emails){
-        var self=this;
+        var self=this, mail;
+
         for(var i=0; i<emails.length; i++){
-            User.findOne({email: emails[i]}, {}, function(err, user){
+            mail=emails[i];
+            User.findOne({email: mail}, {}, function(err, user){
                 if(!user){
+                    self.invitations.push(mail);
                     console.log('userId non trouvé');
                 }else{
                     self.users.push(user._id);
-                    self.save();
-                    //console.log(user);
+                    //self.__creator;
                 }
             });
         }
+        self.save();
     });
 module.exports = mongoose.model('Group', GroupSchema);

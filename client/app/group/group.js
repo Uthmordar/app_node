@@ -22,8 +22,7 @@ angular.module('myappApp')
             $scope.user=Auth.getCurrentUser();
             
             $scope.groupAdd=function(form){
-                //console.log(form.group_name);
-                groupFactory.save({userId: $scope.user._id, name: form.group_name, __creator: $scope.user._id, emails: form.emails}).$promise
+                groupFactory.save({userId: $scope.user._id, name: form.group_name, __creator: $scope.user._id, users: [$scope.user._id], emails: form.emails}).$promise
                 .then(function(){
                     $state.go('group');
                 });
