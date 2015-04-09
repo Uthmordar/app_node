@@ -5,7 +5,7 @@ var Group = require('./group.model');
 
 // Get list of groups
 exports.index = function(req, res) {
-  Group.find(function (err, groups) {
+  Group.find({__creator: req.params.userId}, function (err, groups) {
     if(err) { return handleError(res, err); }
     return res.json(200, groups);
   });

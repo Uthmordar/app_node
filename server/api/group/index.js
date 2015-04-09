@@ -5,7 +5,7 @@ var controller = require('./group.controller');
 
 var router = express.Router();
 
-router.get('/', controller.index);
+router.get('/user/:userId', controller.index);
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
