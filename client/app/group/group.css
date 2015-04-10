@@ -1,0 +1,12 @@
+ul{
+    list-style: none;
+}
+
+li.mine{
+    background-color: azure;
+    text-align: left;
+}
+
+li:not(.mine){
+    text-align: right;
+}

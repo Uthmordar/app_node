@@ -23,6 +23,7 @@ exports.show = function(req, res) {
 // Creates a new message in the DB.
 exports.create = function(req, res) {
     req.body.__creator=req.user._id;
+    req.body.__creatorName=req.user.name;
   Message.create(req.body, function(err, message) {
     if(err) { return handleError(res, err); }
     return res.json(201, message);

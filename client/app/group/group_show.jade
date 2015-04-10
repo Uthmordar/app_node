@@ -3,8 +3,8 @@ div(ng-include='"components/navbar/navbar.html"')
     .col-md-12
         | This is the group view.
         ul
-            li(ng-repeat="m in messages")
-                {{m.content}}
+            li(ng-repeat="m in messages", ng-class='{mine: m.__creator == userId}')
+                | From {{m.__creatorName}} : {{m.creation_date}} __ {{m.content}} {{getCurrentUser()._id}}
 
         form(name="form", ng-submit="messageAdd(form)")
             input(type="text", placeholder="message", ng-model="form.message")

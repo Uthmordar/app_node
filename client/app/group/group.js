@@ -30,8 +30,9 @@ angular.module('myappApp')
         .state('group_show', {
             url: '/group/:id',
             templateUrl: "app/group/group_show.html",
-            controller: function($scope, messageFactory, group, messages, socket){
+            controller: function($scope, messageFactory, group, messages, socket, Auth){
                 $scope.group=group[0];
+                $scope.userId=Auth.getCurrentUser()._id;
                 $scope.messages=messages;
                 socket.syncUpdates('group_'+$scope.group._id, $scope.messages);
                 
