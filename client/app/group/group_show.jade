@@ -1,0 +1,14 @@
+div(ng-include='"components/navbar/navbar.html"')
+.container
+    .col-md-12
+        | This is the group view.
+        ul
+            li(ng-repeat="m in messages")
+                {{m.content}}
+
+        form(name="form", ng-submit="messageAdd(form)")
+            input(type="text", placeholder="message", ng-model="form.message")
+            br
+            input(type="submit", value="send")
+
+div(ng-include='"components/footer/footer.html"')

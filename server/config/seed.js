@@ -8,6 +8,7 @@
 var Thing=require('../api/thing/thing.model');
 var User=require('../api/user/user.model');
 var Group=require('../api/group/group.model');
+var Message=require('../api/message/message.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -30,6 +31,8 @@ Thing.find({}).remove(function() {
     info : 'Easily deploy your app to Heroku or Openshift with the heroku and openshift subgenerators'
   });
 });
+
+Message.find({}).remove(function() {});
 
 User.find({}).remove(function() {
     User.create({
