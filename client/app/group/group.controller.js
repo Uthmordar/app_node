@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('myappApp')
-  .controller('GroupCtrl', function ($scope, groups) {
+  .controller('GroupCtrl', function ($scope, Auth, socket, groups) {
     $scope.message = 'Hello';
     $scope.groups=groups;
+    socket.syncUpdates('group_'+Auth.getCurrentUser()._id, $scope.groups);
   });

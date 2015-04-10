@@ -2,7 +2,7 @@
 
 angular.module('myappApp')
   .controller('LoginCtrl', function ($scope, Auth, $location, $window) {
-    $scope.user = {};
+    $scope.user = {email: "admin@admin.com", password: "admin"};
     $scope.errors = {};
 
     $scope.login = function(form) {

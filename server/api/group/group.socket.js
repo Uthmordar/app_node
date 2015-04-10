@@ -13,10 +13,14 @@ exports.register = function(socket) {
   Group.schema.post('remove', function (doc) {
     onRemove(socket, doc);
   });
-}
+};
 
 function onSave(socket, doc, cb) {
-  socket.emit('group:save', doc);
+    for(var i=0; i<doc.users.length; i++){
+        var tag='group_' + doc.users[i] + ':save';
+        socket.emit(tag, doc);
+    };
+    //socket.emit('group:save', doc);
 }
 
 function onRemove(socket, doc, cb) {

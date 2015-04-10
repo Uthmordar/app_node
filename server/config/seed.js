@@ -49,7 +49,8 @@ User.find({}).remove(function() {
         Group.find({}).remove(function(){
             Group.create({
                 __creator: user._id,
-                name: 'Test group 1 2'
+                name: 'Test group 1 2',
+                invitations: 'admin@admin.com'
                 }, {
                 __creator: user._id,
                 name: 'Test group 2'
