@@ -6,6 +6,47 @@ var request = require('supertest');
 var userFixture = require('../user/user.fixtures');
 
 var users;
+
+describe('POST /api/groups', function(){
+    before(function(done) { 
+        userFixture.createUsers(done);
+    });
+    
+    it('should respond with correct JSON object', function(done){
+        users = userFixture.getUsers();
+        request(app)
+        .post('/auth/local')
+        .send({ email: users[0].email, password: users[0].password })
+        .expect(200)
+        .end(function(err, res) {
+            if(err) throw err;
+            request(app)
+            .post('/api/groups')
+            .send({name: 'test'})
+            .set('Authorization', 'Bearer '+ res.body.token)
+            .expect(201)
+            .expect('Content-Type', /json/)
+            .end(function(err, res){
+                if(err) return done(err);
+                res.body.should.be.instanceof(Object);
+                res.body.name.should.be.equal('test');
+                done();
+            });
+        });
+    });
+    
+    it('should respond with 401', function(done){
+        request(app)
+        .post('/api/groups')
+        .send({name: 'test'})
+        .expect(401)
+        .end(function(err, res){
+            if(err) return done(err);
+            done();
+        });
+    });
+});
+
 describe('GET /api/groups', function() {
 
 

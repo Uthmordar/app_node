@@ -7,6 +7,7 @@ angular.module('myappApp')
             url: '/group',
             templateUrl: 'app/group/group.html',
             controller: 'GroupCtrl',
+            authenticate: true,
             resolve: {
                 groups: function(groupFactory){
                     // query : tableau de resource, get : resource spécifique
@@ -17,6 +18,7 @@ angular.module('myappApp')
         .state('group_new', {
             url: '/group/new',
             templateUrl: 'app/group/group_add.html',
+            authenticate: true,
             controller: function($scope, groupFactory, $state){
             
                 $scope.groupAdd=function(form){
@@ -30,6 +32,7 @@ angular.module('myappApp')
         .state('group_show', {
             url: '/group/:id',
             templateUrl: "app/group/group_show.html",
+            authenticate: true,
             controller: function($scope, messageFactory, group, messages, socket, Auth){
                 $scope.group=group[0];
                 $scope.userId=Auth.getCurrentUser()._id;

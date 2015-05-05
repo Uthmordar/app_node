@@ -6,11 +6,11 @@ var mongoose = require('mongoose'),
 var User=require('../user/user.model');
 
 var GroupSchema = new Schema({
-  __creator: {type: Schema.ObjectId, ref: "User"},
+  __creator: {type: Schema.ObjectId, ref: "User", index: true},
   name: String,
   info: {type: String, default: "infos group"},
   active: Boolean,
-  users: [{type: Schema.ObjectId, ref: "User"}],
+  users: [{type: Schema.ObjectId, ref: "User", index: true}],
   invitations: []
 });
 
