@@ -4,6 +4,7 @@ var should = require('should');
 var app = require('../../app');
 var request = require('supertest');
 var userFixture = require('../user/user.fixtures');
+var User=require('../user/user.model');
 
 var users;
 
@@ -22,7 +23,7 @@ describe('POST /api/groups', function(){
             if(err) throw err;
             request(app)
             .post('/api/groups')
-            .send({name: 'test'})
+            .send({name: 'test', invitations: ['toto@mail.com', users[1].email]})
             .set('Authorization', 'Bearer '+ res.body.token)
             .expect(201)
             .expect('Content-Type', /json/)
@@ -30,7 +31,11 @@ describe('POST /api/groups', function(){
                 if(err) return done(err);
                 res.body.should.be.instanceof(Object);
                 res.body.name.should.be.equal('test');
-                done();
+                res.body.invitations[0].should.be.equal('toto@mail.com');
+                var u=User.findOne({_id: res.body.users[0]}, function(err, user){ 
+                    should.exist(user);
+                    done();
+                });
             });
         });
     });
