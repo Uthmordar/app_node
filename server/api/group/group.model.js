@@ -7,7 +7,7 @@ var User=require('../user/user.model');
 
 var GroupSchema = new Schema({
   __creator: {type: Schema.ObjectId, ref: "User", index: true},
-  name: String,
+  name: {type: String, required: true},
   info: {type: String, default: "infos group"},
   active: Boolean,
   users: [{type: Schema.ObjectId, ref: "User", index: true}],
@@ -23,4 +23,19 @@ GroupSchema
         next();
     });
 });
+
+GroupSchema.methods={
+    removeUser: function(user, callback){
+        console.log(user);
+        /*var index=this.emails.indexOf(user.email);
+        if(index>-1) this.emails.splice(index, 1);*/
+        
+        var index=this.users.indexOf(user._id);
+        if(index>-1) this.users.splice(index, 1);
+        
+        this.save(function(err){
+            return callback(err);
+        });
+    }
+};
 module.exports = mongoose.model('Group', GroupSchema);

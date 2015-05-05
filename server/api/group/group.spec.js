@@ -5,8 +5,10 @@ var app = require('../../app');
 var request = require('supertest');
 var userFixture = require('../user/user.fixtures');
 var User=require('../user/user.model');
+var Group = require('./group.model');
+var async=require('async');
 
-var users;
+var users, token, group;
 
 describe('POST /api/groups', function(){
     before(function(done) { 
@@ -21,10 +23,11 @@ describe('POST /api/groups', function(){
         .expect(200)
         .end(function(err, res) {
             if(err) throw err;
+            token=res.body.token;
             request(app)
             .post('/api/groups')
             .send({name: 'test', invitations: ['toto@mail.com', users[1].email]})
-            .set('Authorization', 'Bearer '+ res.body.token)
+            .set('Authorization', 'Bearer '+ token)
             .expect(201)
             .expect('Content-Type', /json/)
             .end(function(err, res){
@@ -32,9 +35,24 @@ describe('POST /api/groups', function(){
                 res.body.should.be.instanceof(Object);
                 res.body.name.should.be.equal('test');
                 res.body.invitations[0].should.be.equal('toto@mail.com');
-                var u=User.findOne({_id: res.body.users[0]}, function(err, user){ 
-                    should.exist(user);
-                    done();
+                async.parallel([
+                    function(callback){
+                        User.findOne({_id: res.body.users[0]}, function(err, user){
+                            if(err) return done(err);
+                            should.exist(user, 'user not found in database');
+                            callback(null, user);
+                        });
+                    },
+                    function(callback){
+                        User.findOne({_id: res.body.users[1]}, function(err, user){
+                            if(err) return done(err);
+                            should.exist(user, 'creator not found in database');
+                            callback(null, user);
+                        });
+                    }
+                ], function(err, result){
+                    group=res.body;
+                    done(err);
                 });
             });
         });
@@ -90,4 +108,30 @@ describe('GET /api/groups', function() {
         done();
       });
   });
+});
+
+describe('DELETE /api/groups/nnn', function(){
+    
+    it('should delete user from group users', function(done){
+        request(app)
+        .post('/auth/local')
+        .send({ email: users[0].email, password: users[0].password })
+        .expect(200)
+        .end(function(err, res) {
+            if(err) throw err;
+            request(app)
+            .delete('/api/groups/'+group._id)
+            .set('Authorization', 'Bearer ' + res.body.token)
+            .expect(204)
+            .end(function(err, res){
+                if(err) return done(err);
+                Group.findOne({_id:group._id}, function(err, group2){
+                    if(err) return done(err, 'Group non trouvé');
+                    var index=group2.users.indexOf(users[0]._id);
+                    index.should.be.equal(-1, 'User still in group');
+                });
+                done();
+            });
+        });
+    });
 });
