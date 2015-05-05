@@ -3,8 +3,9 @@
 // Test specific configuration
 // ===========================
 module.exports = {
-  // MongoDB connection options
-  mongo: {
-    uri: 'mongodb://localhost/myapp-test'
-  }
+    // MongoDB connection options
+    mongo: {
+      uri: 'mongodb://localhost/myapp-test'
+    },
+    seedDB: true
 };
