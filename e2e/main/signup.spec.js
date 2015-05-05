@@ -9,12 +9,13 @@ describe('Main View', function() {
   });
 
     it('should connect', function() {
-        page.name.sendKeys('Admin');
-        page.email.sendKeys('admin@admin.com');
-        page.password.sendKeys('admin');
+        page.name.sendKeys('Titi');
+        page.email.sendKeys('titi@titi.com');
+        page.password.sendKeys('titi');
         page.goButton.click().then(function(){
             browser.waitForAngular();
             expect(browser.getLocationAbsUrl()).toBe('/');
+            expect(page.userName.getText()).toBe('Titi');
         });
     });
 });
