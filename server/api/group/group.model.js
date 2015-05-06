@@ -20,11 +20,17 @@ GroupSchema
     this.invitations=_.uniq(this.invitations);
     var self=this;
     User.find().where('email').in(self.invitations).exec(function(err, users){
-        self.users=_.uniq(_.union(users, self.users));
-        
         if(self.isNew){
+            self.users=users;
             var index=self.users.indexOf(self.__creator);
             if(index===-1) self.users.push(self.__creator);
+        }else if(users.length){
+            var pl=_.pluck(users, '_id');
+            for(var i=0; i<pl.length; i++){
+                var added=self.users.addToSet(pl[i]);
+            }
+        }else{
+            self.users=users;
         }
         var usersEmails = _.pluck(users, 'email');
         self.invitations = _.difference(self.invitations, usersEmails);
