@@ -47,13 +47,17 @@ exports.addEmail= function(req, res){
     Group.findById(req.params.id, function(err, group){
         if(err){ return handleError(res, err);}
         if(!group){ return res.send(404);}
-        if(group.__creator !== req.user._id){
+        if(group.__creator.toString() !== req.user._id.toString()){
             return res.send(403, new Error('Only creator can do this'));
         }
-        group.addEmails(req.params.email, function(err){
-            if(err){ return handleError(res, err);}
-                return res.json(204);
-        });
+        try{
+            group.addEmails(req.body.emails, function(err){
+                if(err){ return handleError(res, err);}
+                return res.json(200);
+            });
+        }catch(Error){
+            return res.send(422, Error.toString());
+        }
     });
 };
 

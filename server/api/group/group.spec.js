@@ -125,6 +125,7 @@ describe('DELETE /api/groups/nnn', function(){
                     index=group2.users.indexOf(users[0]._id);
 
                     index.should.be.equal(-1, 'User still in group');
+                    group=group2;
                 });
                 done();
             });
@@ -147,6 +148,47 @@ describe('POST /api/groups/nnn/email', function(){
             .expect(403)
             .end(function(err, res){
                 if(err) return done(err);
+                done();
+            });
+        });
+    });
+    
+    it('should respond with error if no emails', function(done){
+        request(app)
+        .post('/auth/local')
+        .send({ email: users[0].email, password: users[0].password })
+        .expect(200)
+        .end(function(err, res){
+            if(err) throw err;
+            request(app)
+            .post('/api/groups/'+group._id+'/email')
+            .set('Authorization', 'Bearer ' + res.body.token)
+            .expect(422)
+            .end(function(err, res){
+                if(err) return done(err);
+                done();
+            });
+        });
+    });
+    
+    it('should respond with no error', function(done){
+        request(app)
+        .post('/auth/local')
+        .send({ email: users[0].email, password: users[0].password })
+        .expect(200)
+        .end(function(err, res){
+            if(err) throw err;
+            request(app)
+            .post('/api/groups/'+group._id+'/email')
+            .send({emails: ["titi@mail.com", "admin@admin.com"]})
+            .set('Authorization', 'Bearer ' + res.body.token)
+            .expect(200)
+            .end(function(err, res){
+                if(err) return done(err);
+                Group.findOne({_id:group._id}, function(err, group2){
+                    group2.invitations.length.should.be.equal(2, 'wrong emails quantity');
+                    group2.users.length.should.be.equal(2);
+                });
                 done();
             });
         });
