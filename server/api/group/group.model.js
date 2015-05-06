@@ -17,6 +17,8 @@ var GroupSchema = new Schema({
 
 GroupSchema
 .pre('save', function(next){
+    if(!this.isNew) return next();
+    
     this.invitations=_.uniq(this.invitations);
     var self=this;
     User.find().where('email').in(self.invitations).exec(function(err, users){
@@ -33,7 +35,7 @@ GroupSchema.methods={
     removeUser: function(user, callback){
         /*var index=this.invitations.indexOf(user.email);
         if(index>-1) this.invitations.splice(index, 1);*/
-        
+
         var index=this.users.indexOf(user._id);
         if(index>-1) this.users.splice(index, 1);
         

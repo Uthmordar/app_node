@@ -71,14 +71,7 @@ describe('POST /api/groups', function(){
 });
 
 describe('GET /api/groups', function() {
-
-
-  before(function(done) { 
-    userFixture.createUsers(done);
-  });
-
   it('should respond with JSON array', function(done) {
-    users = userFixture.getUsers();
     request(app)
     .post('/auth/local')
     .send({ email: users[0].email, password: users[0].password })
@@ -130,8 +123,30 @@ describe('DELETE /api/groups/nnn', function(){
                     var index=group2.invitations.indexOf(users[0].email);
                     index.should.be.equal(-1, 'User still in invitations');
                     index=group2.users.indexOf(users[0]._id);
+
                     index.should.be.equal(-1, 'User still in group');
                 });
+                done();
+            });
+        });
+    });
+});
+
+describe('POST /api/groups/nnn/email', function(){
+    it('should respond with 401 of not the creator', function(done){
+        request(app)
+        .post('/auth/local')
+        .send({ email: users[1].email, password: users[1].password })
+        .expect(200)
+        .end(function(err, res){
+            if(err) throw err;
+            request(app)
+            .post('/api/groups/'+group._id+'/email')
+            .send({emails: ["titi@mail.com"]})
+            .set('Authorization', 'Bearer ' + res.body.token)
+            .expect(403)
+            .end(function(err, res){
+                if(err) return done(err);
                 done();
             });
         });
