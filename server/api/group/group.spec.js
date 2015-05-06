@@ -127,7 +127,9 @@ describe('DELETE /api/groups/nnn', function(){
                 if(err) return done(err);
                 Group.findOne({_id:group._id}, function(err, group2){
                     if(err) return done(err, 'Group non trouvé');
-                    var index=group2.users.indexOf(users[0]._id);
+                    var index=group2.invitations.indexOf(users[0].email);
+                    index.should.be.equal(-1, 'User still in invitations');
+                    index=group2.users.indexOf(users[0]._id);
                     index.should.be.equal(-1, 'User still in group');
                 });
                 done();
