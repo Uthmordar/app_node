@@ -19,7 +19,18 @@ GroupSchema
 .pre('save', function(next){    
     this.invitations=_.uniq(this.invitations);
     var self=this;
-    User.find().where('email').in(self.invitations).exec(function(err, users){
+    User.find().where('email').in(self.invitations).where('_id').nin(this.users).exec(function(err, users){
+        self.users=_.union(self.users, users);
+        if(self.isNew){
+            var index=self.users.indexOf(self.__creator);
+            if(index===-1) self.users.push(self.__creator);
+        }
+        User.find().where('_id').in(self.users).select('email').exec(function(err, users){
+            self.invitations=_.difference(self.invitations, _.pluck(users, 'email')); 
+            next();
+        });
+    });
+    /*User.find().where('email').in(self.invitations).exec(function(err, users){
         if(self.isNew){
             self.users=users;
             var index=self.users.indexOf(self.__creator);
@@ -35,7 +46,7 @@ GroupSchema
         var usersEmails = _.pluck(users, 'email');
         self.invitations = _.difference(self.invitations, usersEmails);
         next();
-    });
+    });*/
 });
 
 GroupSchema.methods={

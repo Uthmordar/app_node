@@ -172,7 +172,6 @@ describe('POST /api/groups/nnn/email', function(){
     });
     
     it('should respond with no error', function(done){
-        console.log(group);
         request(app)
         .post('/auth/local')
         .send({ email: users[0].email, password: users[0].password })
@@ -187,7 +186,6 @@ describe('POST /api/groups/nnn/email', function(){
             .end(function(err, res){
                 if(err) return done(err);
                 Group.findOne({_id:group._id}, function(err, group2){
-                    console.log(group2);
                     group2.invitations.length.should.be.equal(2, 'wrong emails quantity');
                     group2.users.length.should.be.equal(2);
                 });
