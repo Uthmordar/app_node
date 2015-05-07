@@ -8,7 +8,7 @@ var Group = require('./group.model');
 
 exports.register = function(socket) {
   Group.schema.post('save', function (doc) {
-    onSave(socket, doc);
+        onSave(socket, doc);
   });
   Group.schema.post('remove', function (doc) {
     onRemove(socket, doc);

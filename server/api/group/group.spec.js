@@ -7,6 +7,12 @@ var userFixture = require('../user/user.fixtures');
 var User=require('../user/user.model');
 var Group = require('./group.model');
 var async=require('async');
+var io=require('socket.io-client');
+var options={
+    transports: ['websocket'],
+    'force new connection': true,
+    path: '/socket.io-client'
+};
 
 var users, token, group;
 
@@ -190,6 +196,44 @@ describe('POST /api/groups/nnn/email', function(){
                     group2.users.length.should.be.equal(2);
                 });
                 done();
+            });
+        });
+    });
+    
+    it('should send new group by socketio to group subscriber users', function(done){
+        var data={
+            __creator: users[0]._id,
+            name: 'test test',
+            invitations: ['toto@mail.com']
+        };
+        request(app)
+        .post('/auth/local')
+        .send({ email: users[0].email, password: users[0].password })
+        .expect(200)
+        .end(function(err, res){
+            var checkMessage=function(client, tag){
+                client.on(tag, function(msg){
+                    data.__creator.toString().should.be.equal(msg.__creator);
+                    data.name.should.be.equal(msg.name);
+                    client.disconnect();
+                    done();
+                });
+            };
+
+            var client1, client2;
+
+            client1=io.connect('http://localhost:9000', options);
+            client1.on('connect', function(a, b){
+                checkMessage(client1, 'group_'+users[0]._id+':save');
+                Group.create(data, function(err, group){
+                    if(err) done(err);
+                });
+            })
+            .on('connect_error', function(err, b){
+                done(err);
+            })
+            .on('connect_timeout', function(err, b){
+                done(err);
             });
         });
     });
