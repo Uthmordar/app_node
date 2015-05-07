@@ -14,11 +14,60 @@ var options={
     path: '/socket.io-client'
 };
 
-var users, token, group;
+var users, token, group, data;
+
+var checkMessage=function(user, callback){
+    var tag='group_'+user._id+':save';
+    user.client.on(tag, function(msg){
+        data.__creator.toString().should.be.equal(msg.__creator);
+        data.name.should.be.equal(msg.name);
+        user.client.disconnect();
+        return callback(null);
+    });
+};
+var checkMessages=function(done){
+    async.parallel([
+        function(callback){
+            checkMessage(users[0], callback);
+        },
+        function(callback){
+            checkMessage(users[1], callback);
+        }
+    ], function(err, result){
+        done(err);
+    });
+};
+            
+function connectUser(user, callback){
+    user.client= io.connect('http://localhost:9000', options)
+    .on('connect', function(a, b){
+        return callback(null, user);
+    })
+    .on('connect_error', function(err, b){
+        return callback(err);
+    })
+    .on('connect_timeout', function(err, b){
+        return callback(err);
+    });
+}
+
+function connectUsers(done){
+    async.parallel([
+        function(callback){
+            connectUser(users[0], callback);
+        },
+        function(callback){
+            connectUser(users[1], callback);
+        }
+    ],
+    function(err, result){/*return done(err);*/}
+    );  
+}
 
 describe('POST /api/groups', function(){
     before(function(done) { 
         userFixture.createUsers(done);
+        users = userFixture.getUsers();
     });
     
     it('should respond with correct JSON object', function(done){
@@ -139,7 +188,7 @@ describe('DELETE /api/groups/nnn', function(){
     });
 });
 
-describe('POST /api/groups/nnn/email', function(){
+describe('POST /api/groups/nnn/email', function(){    
     it('should respond with 401 of not the creator', function(done){
         request(app)
         .post('/auth/local')
@@ -201,17 +250,23 @@ describe('POST /api/groups/nnn/email', function(){
     });
     
     it('should send new group by socketio to group subscriber users', function(done){
-        var data={
+        connectUsers(done); 
+        data={
             __creator: users[0]._id,
             name: 'test test',
-            invitations: ['toto@mail.com']
+            invitations: ['toto@mail.com', users[1].email]
         };
         request(app)
         .post('/auth/local')
         .send({ email: users[0].email, password: users[0].password })
         .expect(200)
         .end(function(err, res){
-            var checkMessage=function(client, tag){
+            checkMessages(done);
+            Group.create(data, function(err, group3){
+                if(err) done(err);
+            });
+            /*var checkMessage=function(client, user){
+                var tag='group_'+user._id+':save';
                 client.on(tag, function(msg){
                     data.__creator.toString().should.be.equal(msg.__creator);
                     data.name.should.be.equal(msg.name);
@@ -224,8 +279,8 @@ describe('POST /api/groups/nnn/email', function(){
 
             client1=io.connect('http://localhost:9000', options);
             client1.on('connect', function(a, b){
-                checkMessage(client1, 'group_'+users[0]._id+':save');
-                Group.create(data, function(err, group){
+                checkMessage(client1);
+                Group.create(data, function(err, group3){
                     if(err) done(err);
                 });
             })
@@ -234,7 +289,7 @@ describe('POST /api/groups/nnn/email', function(){
             })
             .on('connect_timeout', function(err, b){
                 done(err);
-            });
+            });*/
         });
     });
 });
