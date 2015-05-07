@@ -314,7 +314,8 @@ describe('User.create', function(){
         Group.create(data, function(err, group){
             if(err) done(err);
             userFixture.createUser('toto@mail.com', function(err, user){
-                done(err);
+                group.invitations.indexOf(user.email).should.be.equal(-1);
+                done();
             });
         });
     });
