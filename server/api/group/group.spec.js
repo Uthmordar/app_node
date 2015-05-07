@@ -293,3 +293,29 @@ describe('POST /api/groups/nnn/email', function(){
         });
     });
 });
+
+describe('User.create', function(){
+    before(function(done){
+        User.findOne({email: 'toto@mail.com'}, function(err, user){
+            if(err) return done(err);
+            if (!user) return done();
+            user.remove(function(err, user){
+                done(err);
+            });
+        });
+    });
+    it('should update group where user is email subscriber', function(done){
+        var data={
+           __creator: users[0]._id,
+           name: 'adzada',
+           emails: ['toto@mail.com']
+        };
+        
+        Group.create(data, function(err, group){
+            if(err) done(err);
+            userFixture.createUser('toto@mail.com', function(err, user){
+                done(err);
+            });
+        });
+    });
+});
